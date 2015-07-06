@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "twitch shortcuts",
+  "description": "twitch tv shortcuts",
+  "version": "1.0",
+  "browser_action": {
+    "default_popup": "index.html"
+  },
+  "web_accessible_resources": ["index.js"],
+  "permissions": [
+    "tabs",
+    "activeTab"
+  ]
+  // "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'"
+}
