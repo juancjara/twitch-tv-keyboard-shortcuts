@@ -9,6 +9,7 @@ console.log('successfully injected');
 
   var init = function() {
     player = document.querySelectorAll('.ember-view.full object')[0];
+    player.unmute();
     initListeners();
   };
 
