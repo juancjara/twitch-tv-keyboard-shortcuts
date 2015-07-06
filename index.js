@@ -1,42 +1,54 @@
+//webapps.stackexchange.com/questions/25419/youtube-keyboard-shortcuts
 var stepSize = 10; //seconds
-var accSteps = 0;
-var pauseAt = 0;
-var startTime = 0;
+var isMuted = false; //assuming stream is not muted at the begining
 var player;
 
 var init = function() {
   player = $('.ember-view.full object')[0];
-  player.videoSeek(0);
-  play();
+  initListeners();
 };
+
+var initListeners = function() {
+  var keyEvents = {
+    75: playOrPause, //k
+    76: moveRight, //l
+    74: moveLeft, //j,
+    77: toggleSound //m
+  };
+
+  $(document).keydown(function(e) {
+    if (e.which in keyEvents) {
+      keyEvents[e.which]();
+    }
+  });
+};
+
+var toggleSound = function() {
+  isMuted = !isMuted;
+  isMuted ? unmute(): mute();
+};
+
+var mute = function() {player.mute()};
+var unmute = function() {player.unmute();}
 
 var playOrPause = function() {
   player.isPaused() ? play(): pause();
-}
+};
 
 var play = function() {
-  accSteps = 0;
-  startTime = new Date().getTime() - (pauseAt - startTime);
-  console.log((new Date().getTime() - startTime)/1000 );
   player.playVideo();
 };
 
 var pause = function() {
-  pauseAt = new Date().getTime() + accSteps *1000;
-  console.log((pauseAt - startTime)/1000)
   player.pauseVideo();
 };
 
 var move = function(steps) {
   return function() {
-    if (player.isPaused()) {
-      return;
-    }
-    var now = new Date().getTime();
-    var jump = Math.round((now - startTime)/1000) + accSteps + steps;
-    console.log(jump);
-    accSteps += steps;
-    player.videoSeek(jump);
+    var actualTime = player.getVideoTime();
+    var jumpTo = actualTime + steps;
+    if (jumpTo < 0) {jumpTo = 0};
+    player.videoSeek(jumpTo);
   } 
 };
 
