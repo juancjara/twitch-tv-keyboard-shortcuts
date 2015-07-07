@@ -1,4 +1,4 @@
-console.log('successfully injected');
+console.log('twitch shortcuts successfully injected', new Date().getTime());
 //webapps.stackexchange.com/questions/25419/youtube-keyboard-shortcuts
 
 (function(){
@@ -21,11 +21,13 @@ console.log('successfully injected');
       77: toggleSound //m
     };
 
-    document.addEventListener('keyup',function(e){
+    var keyUpListener = function(e){
+      console.log('hit');
       if (e.keyCode in keyEvents) {
         keyEvents[e.keyCode]();
       }
-    })
+    };
+    document.addEventListener('keyup', keyUpListener);
   };
 
   var toggleSound = function() {
