@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "twitch shortcuts",
-  "description": "twitch tv shortcuts",
-  "version": "1.0",
+  "name": "twitch keyboard shortcuts",
+  "description": "twitch tv keyboard shortcuts",
+  "version": "1.3",
   "icons": {
     "128": "twitch-128.png"
   },
@@ -10,9 +10,21 @@
     "default_popup": "index.html"
   },
   "web_accessible_resources": ["index.js"],
+   "content_scripts": [
+    {
+      "matches": ["http://www.twitch.tv/*/v/*", "http://twitch.tv/*/v/*"],
+      "js": ["listen-past-broadcast.js"]
+      // "js": ["test.js"]
+    }
+  ],
   "permissions": [
+    "storage",
     "tabs",
     "activeTab",
     "notifications"
-  ]
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  }
 }
+// "matches": ["http://www.twitch.tv/*/v/*", "http://twitch.tv/*/v/*"],

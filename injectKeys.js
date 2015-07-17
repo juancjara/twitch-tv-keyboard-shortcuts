@@ -22,7 +22,7 @@ console.log('twitch shortcuts successfully injected', new Date().getTime());
     };
 
     var keyUpListener = function(e){
-      console.log('hit');
+      console.log('hit', player);
       if (e.keyCode in keyEvents) {
         keyEvents[e.keyCode]();
       }

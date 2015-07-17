@@ -21,13 +21,14 @@ var Notification = {
     }, function() {});
   }
 }
+
 //double loading script
 var injectJs = function injectJs() {
   Notification.create({message: 'Script loading'});
-  console.log(test);
+  
   chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.executeScript(null, {file:"injectKeys.js"}, function(){
-      Notification.create({message: 'Script loadead'});
+      Notification.create({message: 'Script loaded'});
     });
     
   });
@@ -49,7 +50,7 @@ var init = function() {
   });
 
   document.getElementById("btn")
-  .addEventListener("click", injectJs);
+    .addEventListener("click", injectJs);
 
 }
 
