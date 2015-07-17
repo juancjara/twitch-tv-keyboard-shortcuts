@@ -4,6 +4,11 @@
   "description": "Use youtube keyboard shortcuts on Twitch tv pastbroadcast",
   "main": "index.js",
   "scripts": {
+    "w-background": "watchify src/js/background/main.js -o build/js/bg-bundle.js",
+    "w-content-script": "watchify src/js/content-script/main.js -o build/js/cs-bundle.js",
+    "w-simple": "watchify src/js/main.js -o build/js/bundle.js -v",
+    "w-other": "watchify src/js/inject.js -o build/js/inject.js -v",
+    "watch": "npm run w-simple & npm run w-content-script & npm run w-background & npm run w-other",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
