@@ -30,16 +30,17 @@ var data = [
   {key: 'M', description: 'Mute or unmute'}
 ];
 
-var toggleChecked = function(e) {
-  var obj = {}; obj[constants.SHOULD_RESUME] = e.target.checked;
+var toggleChecked = function(key, e) {
+  console.log('toggleChecked');
+  var obj = {}; obj[key] = e.target.checked;
   Storage.set(obj);
 }
 
 var list = document.getElementById('list-commands');
 var autoResume = document.getElementById('autoResume');
+var autoSave = document.getElementById('autoSave');
 
 var updateUrl = function(newUrl) {
-  console.log('newUrl', newUrl);
   if (newUrl) {
     chrome.tabs.update(null, {url: newUrl});
   }
@@ -49,21 +50,26 @@ var initEvents = function() {
 
   document.getElementById('resume')
     .addEventListener('click', function() {
-      
+
       chrome.tabs.getSelected(null, function(tab) {  
-        
         resumeVideo(utils.getPathname(tab.url), utils.getSearchPath(tab.url),
                     updateUrl);
-        
       });
-
     });
 
   document.getElementById("inject")
     .addEventListener("click", injectJs);
   
-  autoResume.addEventListener('click', toggleChecked);
+  autoResume.addEventListener('click', utils.partial(toggleChecked,
+                                                     constants.SHOULD_RESUME));
+  autoSave.addEventListener('click', utils.partial(toggleChecked,
+                                                     constants.SHOULD_SAVE));
+
 }
+
+var updateCheckbox = function(field, checked) {
+  field.checked = checked;
+};
 
 var init = function() {
   data.forEach(function(e) {
@@ -73,9 +79,8 @@ var init = function() {
     list.appendChild(li);
   });
 
-  Storage.get(constants.SHOULD_RESUME, function(shouldResume) {
-    autoResume.checked = shouldResume;
-  })
+  Storage.get(constants.SHOULD_RESUME, utils.partial(updateCheckbox, autoResume));
+  Storage.get(constants.SHOULD_SAVE, utils.partial(updateCheckbox, autoSave));
 
   initEvents();
 }

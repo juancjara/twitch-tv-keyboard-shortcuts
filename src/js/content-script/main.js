@@ -7,12 +7,12 @@ var id = window.location.pathname.split('/').splice(2).join('');
 
 window.onbeforeunload = function() {
   var player = document.querySelectorAll('.ember-view.full object');
-  if (player && player.length) {
-    player = player[0];
-    var obj = {};
-    obj[id] = player.getVideoTime();
-    chrome.extension.sendMessage(obj);
-  }
+    if (player && player.length) {
+      player = player[0];
+      var obj = {};
+      obj[id] = player.getVideoTime();
+      chrome.extension.sendMessage(obj);
+    }
 };
 
 var updateUrl = function(newUrl) {

@@ -5,19 +5,28 @@ var constants = require('../constants');
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     console.log(request);
-    Storage.set(request);
+    Storage.get(constants.SHOULD_SAVE, function(shouldSave) {
+      console.log('SHOULD_SAVE', shouldSave);
+      Storage.set(request);
+    });
+    
   }
 );
 
-var initFirstTime = function() {
-  Storage.get(constants.SHOULD_RESUME, function(data) {
-    console.log('looking for', data);
+var initValue = function(key, defaultVal) {
+  Storage.get(key, function(data) {
+    console.log('val', data);
     if (data === null) {
       var obj = {};
-      obj[constants.SHOULD_RESUME] = true; 
-      Storage.set(obj, function() {console.log('done');});
+      obj[key] = defaultVal;
+      Storage.set(obj, function() {console.log('done')});
     }
   })
+};
+
+var initFirstTime = function() {
+  initValue(constants.SHOULD_RESUME, true);
+  initValue(constants.SHOULD_SAVE, true);
 };
 
 initFirstTime();
@@ -47,6 +56,7 @@ module.exports = Storage;
 
 },{}],3:[function(require,module,exports){
 module.exports = {
-  SHOULD_RESUME: 'shoudlResume'
+  SHOULD_RESUME: 'shoudlResume',
+  SHOULD_SAVE: 'shouldSave'
 }
 },{}]},{},[1]);

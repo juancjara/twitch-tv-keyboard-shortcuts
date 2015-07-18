@@ -68,7 +68,8 @@ module.exports = Storage;
 
 },{}],4:[function(require,module,exports){
 module.exports = {
-  SHOULD_RESUME: 'shoudlResume'
+  SHOULD_RESUME: 'shoudlResume',
+  SHOULD_SAVE: 'shouldSave'
 }
 },{}],5:[function(require,module,exports){
 var Storage = require('../chrome-api/storage');
@@ -132,16 +133,17 @@ var data = [
   {key: 'M', description: 'Mute or unmute'}
 ];
 
-var toggleChecked = function(e) {
-  var obj = {}; obj[constants.SHOULD_RESUME] = e.target.checked;
+var toggleChecked = function(key, e) {
+  console.log('toggleChecked');
+  var obj = {}; obj[key] = e.target.checked;
   Storage.set(obj);
 }
 
 var list = document.getElementById('list-commands');
 var autoResume = document.getElementById('autoResume');
+var autoSave = document.getElementById('autoSave');
 
 var updateUrl = function(newUrl) {
-  console.log('newUrl', newUrl);
   if (newUrl) {
     chrome.tabs.update(null, {url: newUrl});
   }
@@ -151,21 +153,26 @@ var initEvents = function() {
 
   document.getElementById('resume')
     .addEventListener('click', function() {
-      
+
       chrome.tabs.getSelected(null, function(tab) {  
-        
         resumeVideo(utils.getPathname(tab.url), utils.getSearchPath(tab.url),
                     updateUrl);
-        
       });
-
     });
 
   document.getElementById("inject")
     .addEventListener("click", injectJs);
   
-  autoResume.addEventListener('click', toggleChecked);
+  autoResume.addEventListener('click', utils.partial(toggleChecked,
+                                                     constants.SHOULD_RESUME));
+  autoSave.addEventListener('click', utils.partial(toggleChecked,
+                                                     constants.SHOULD_SAVE));
+
 }
+
+var updateCheckbox = function(field, checked) {
+  field.checked = checked;
+};
 
 var init = function() {
   data.forEach(function(e) {
@@ -175,9 +182,8 @@ var init = function() {
     list.appendChild(li);
   });
 
-  Storage.get(constants.SHOULD_RESUME, function(shouldResume) {
-    autoResume.checked = shouldResume;
-  })
+  Storage.get(constants.SHOULD_RESUME, utils.partial(updateCheckbox, autoResume));
+  Storage.get(constants.SHOULD_SAVE, utils.partial(updateCheckbox, autoSave));
 
   initEvents();
 }
@@ -188,6 +194,18 @@ var format = function(s, d) {
   for(var p in d)
     s=s.replace(new RegExp('{'+p+'}','g'), d[p]);
   return s;
+}
+
+var argsToArray = function(args) {
+  return args = Array.prototype.slice.call(args);
+}
+
+var partial = function(fn) {
+  var pastArgs = argsToArray(arguments).slice(1);
+  return function() {
+    var newArgs = argsToArray(arguments);
+    return fn.apply(null, pastArgs.concat(newArgs));
+  }
 }
 
 var floatToInt = function(value) {
@@ -241,5 +259,5 @@ format.formatSecondsToPath = formatSecondsToPath;
 format.unformatTime = unformatTime;
 format.getPathname = getPathname;
 format.getSearchPath = getSearchPath;
-
+format.partial = partial;
 },{}]},{},[6]);

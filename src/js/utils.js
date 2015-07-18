@@ -4,6 +4,18 @@ var format = function(s, d) {
   return s;
 }
 
+var argsToArray = function(args) {
+  return args = Array.prototype.slice.call(args);
+}
+
+var partial = function(fn) {
+  var pastArgs = argsToArray(arguments).slice(1);
+  return function() {
+    var newArgs = argsToArray(arguments);
+    return fn.apply(null, pastArgs.concat(newArgs));
+  }
+}
+
 var floatToInt = function(value) {
   return value | 0;
 }
@@ -55,3 +67,4 @@ format.formatSecondsToPath = formatSecondsToPath;
 format.unformatTime = unformatTime;
 format.getPathname = getPathname;
 format.getSearchPath = getSearchPath;
+format.partial = partial;

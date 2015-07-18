@@ -24,7 +24,8 @@ module.exports = Storage;
 
 },{}],2:[function(require,module,exports){
 module.exports = {
-  SHOULD_RESUME: 'shoudlResume'
+  SHOULD_RESUME: 'shoudlResume',
+  SHOULD_SAVE: 'shouldSave'
 }
 },{}],3:[function(require,module,exports){
 var Storage = require('../chrome-api/storage');
@@ -36,12 +37,12 @@ var id = window.location.pathname.split('/').splice(2).join('');
 
 window.onbeforeunload = function() {
   var player = document.querySelectorAll('.ember-view.full object');
-  if (player && player.length) {
-    player = player[0];
-    var obj = {};
-    obj[id] = player.getVideoTime();
-    chrome.extension.sendMessage(obj);
-  }
+    if (player && player.length) {
+      player = player[0];
+      var obj = {};
+      obj[id] = player.getVideoTime();
+      chrome.extension.sendMessage(obj);
+    }
 };
 
 var updateUrl = function(newUrl) {
@@ -92,6 +93,18 @@ var format = function(s, d) {
   for(var p in d)
     s=s.replace(new RegExp('{'+p+'}','g'), d[p]);
   return s;
+}
+
+var argsToArray = function(args) {
+  return args = Array.prototype.slice.call(args);
+}
+
+var partial = function(fn) {
+  var pastArgs = argsToArray(arguments).slice(1);
+  return function() {
+    var newArgs = argsToArray(arguments);
+    return fn.apply(null, pastArgs.concat(newArgs));
+  }
 }
 
 var floatToInt = function(value) {
@@ -145,5 +158,5 @@ format.formatSecondsToPath = formatSecondsToPath;
 format.unformatTime = unformatTime;
 format.getPathname = getPathname;
 format.getSearchPath = getSearchPath;
-
+format.partial = partial;
 },{}]},{},[3]);
