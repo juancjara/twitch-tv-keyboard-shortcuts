@@ -9,6 +9,7 @@
     "w-simple": "watchify src/js/main.js -o build/js/bundle.js -v",
     "w-other": "watchify src/js/inject.js -o build/js/inject.js -v",
     "watch": "npm run w-simple & npm run w-content-script & npm run w-background & npm run w-other",
+    "deploy": "zip -r app.zip build/.",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
