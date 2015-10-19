@@ -1,15 +1,41 @@
 console.log('twitch shortcuts successfully injected', new Date());
-//webapps.stackexchange.com/questions/25419/youtube-keyboard-shortcuts
 
-(function(){
+var getPlayer = function() {
+  var videoPlayer = {};
+  var player = null;
+  player = document.querySelectorAll('.ember-view.full object')[0];
+
+  if (player) {
+    console.log('if');
+    videoPlayer.mute = player.mute();
+    videoPlayer.unmute = player.unmute();
+  } else {
+    console.log('else');
+    player = document.querySelector('.player-video object');
+    var objVolumen = document.querySelector('.player-volume button');
+    var muteUnmute = function() {
+      objVolumen.click();
+    };
+    videoPlayer.mute = muteUnmute;
+    videoPlayer.unmute = videoPlayer.mute;
+  }
+
+  videoPlayer.play = player.playVideo;
+  videoPlayer.pause = player.pauseVideo;
+  videoPlayer.isPaused = player.isPaused;
+  videoPlayer.getTime = player.getVideoTime;
+  videoPlayer.jump = player.videoSeek;
+
+  return videoPlayer;
+};
+
+(function(player){
 
   var stepSize = 10; //seconds
   var isMuted = false; //assuming stream is not muted at the begining
-  var player;
+  var player = player;
 
   var init = function() {
-    player = document.querySelectorAll('.ember-view.full object')[0];
-    player.unmute();
     initListeners();
   };
 
@@ -36,7 +62,7 @@ console.log('twitch shortcuts successfully injected', new Date());
   };
 
   var playOrPause = function() {
-    player.isPaused() ? player.playVideo(): player.pauseVideo();
+    player.isPaused() ? player.play(): player.pause();
   };
 
   var move = function(steps) {
@@ -44,10 +70,12 @@ console.log('twitch shortcuts successfully injected', new Date());
       if (player.isPaused()) {
         return;
       }
-      var jumpTo = player.getVideoTime() + steps;
-      if (jumpTo < 0) {jumpTo = 0};
-      player.videoSeek(jumpTo);
-    } 
+      var nextTime = player.getTime() + steps;
+      if (nextTime < 0) {
+        nextTime = 0
+      };
+      player.jump(nextTime);
+    }
   };
 
   var moveRight = move(stepSize);
@@ -55,4 +83,4 @@ console.log('twitch shortcuts successfully injected', new Date());
 
   init();
 
-})();
+})(getPlayer());

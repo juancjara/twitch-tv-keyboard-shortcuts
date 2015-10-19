@@ -20,5 +20,8 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/juancjara/twitch-tv-keyboard-shortcuts/issues"
+  },
+  "dependencies": {
+    "watchify": "^3.4.0"
   }
 }

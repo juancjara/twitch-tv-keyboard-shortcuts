@@ -128,8 +128,8 @@ var injectJs = function injectJs() {
 
 var data = [
   {key: 'K', description: 'Play or Pause'},
-  {key: 'L', description: 'Rewind 10 seconds'},
-  {key: 'J', description: 'Forward 10 seconds'},
+  {key: 'J', description: 'Rewind 10 seconds'},
+  {key: 'L', description: 'Forward 10 seconds'},
   {key: 'M', description: 'Mute or unmute'}
 ];
 
