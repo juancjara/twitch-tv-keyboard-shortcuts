@@ -1,17 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-console.log('twitch shortcuts successfully injected', new Date());
-
 var getPlayer = function() {
   var videoPlayer = {};
   var player = null;
   player = document.querySelectorAll('.ember-view.full object')[0];
 
   if (player) {
-    console.log('if');
     videoPlayer.mute = player.mute();
     videoPlayer.unmute = player.unmute();
   } else {
-    console.log('else');
     player = document.querySelector('.player-video object');
     var objVolumen = document.querySelector('.player-volume button');
     var muteUnmute = function() {
@@ -21,14 +17,25 @@ var getPlayer = function() {
     videoPlayer.unmute = videoPlayer.mute;
   }
 
+  if (!player) return {};
+
   videoPlayer.play = player.playVideo;
   videoPlayer.pause = player.pauseVideo;
   videoPlayer.isPaused = player.isPaused;
-  videoPlayer.getTime = player.getVideoTime;
   videoPlayer.jump = player.videoSeek;
+  videoPlayer.getTime = function() {
+    return ~~player.getVideoTime();
+  }
 
   return videoPlayer;
 };
+
+module.exports = getPlayer;
+
+},{}],2:[function(require,module,exports){
+console.log('twitch shortcuts successfully injected', new Date());
+
+var getPlayer = require('./getPlayer.js');
 
 (function(player){
 
@@ -86,4 +93,4 @@ var getPlayer = function() {
 
 })(getPlayer());
 
-},{}]},{},[1]);
+},{"./getPlayer.js":1}]},{},[2]);

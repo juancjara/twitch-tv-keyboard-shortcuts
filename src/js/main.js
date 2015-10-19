@@ -14,12 +14,11 @@ var elemTemplate = '{key} - {description}';
 //double loading script
 var injectJs = function injectJs() {
   Notification.create({message: 'Script loading'});
-  
+
   chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.executeScript(null, {file:"js/inject.js"}, function(){
       Notification.create({message: 'Script loaded'});
     });
-    
   });
 };
 
@@ -51,7 +50,7 @@ var initEvents = function() {
   document.getElementById('resume')
     .addEventListener('click', function() {
 
-      chrome.tabs.getSelected(null, function(tab) {  
+      chrome.tabs.getSelected(null, function(tab) {
         resumeVideo(utils.getPathname(tab.url), utils.getSearchPath(tab.url),
                     updateUrl);
       });
@@ -59,7 +58,7 @@ var initEvents = function() {
 
   document.getElementById("inject")
     .addEventListener("click", injectJs);
-  
+
   autoResume.addEventListener('click', utils.partial(toggleChecked,
                                                      constants.SHOULD_RESUME));
   autoSave.addEventListener('click', utils.partial(toggleChecked,
@@ -74,7 +73,7 @@ var updateCheckbox = function(field, checked) {
 var init = function() {
   data.forEach(function(e) {
     var li = document.createElement('li');
- 
+
     li.innerHTML = utils.format(elemTemplate, e);
     list.appendChild(li);
   });

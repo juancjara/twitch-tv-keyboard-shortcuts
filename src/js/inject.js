@@ -1,33 +1,6 @@
 console.log('twitch shortcuts successfully injected', new Date());
 
-var getPlayer = function() {
-  var videoPlayer = {};
-  var player = null;
-  player = document.querySelectorAll('.ember-view.full object')[0];
-
-  if (player) {
-    console.log('if');
-    videoPlayer.mute = player.mute();
-    videoPlayer.unmute = player.unmute();
-  } else {
-    console.log('else');
-    player = document.querySelector('.player-video object');
-    var objVolumen = document.querySelector('.player-volume button');
-    var muteUnmute = function() {
-      objVolumen.click();
-    };
-    videoPlayer.mute = muteUnmute;
-    videoPlayer.unmute = videoPlayer.mute;
-  }
-
-  videoPlayer.play = player.playVideo;
-  videoPlayer.pause = player.pauseVideo;
-  videoPlayer.isPaused = player.isPaused;
-  videoPlayer.getTime = player.getVideoTime;
-  videoPlayer.jump = player.videoSeek;
-
-  return videoPlayer;
-};
+var getPlayer = require('./getPlayer.js');
 
 (function(player){
 

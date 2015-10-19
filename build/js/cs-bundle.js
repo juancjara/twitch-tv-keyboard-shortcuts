@@ -31,18 +31,19 @@ module.exports = {
 var Storage = require('../chrome-api/storage');
 var constants = require('../constants');
 var resumeVideo = require('./resume-video');
+var getPlayer = require('../getPlayer');
 
-console.log('listen past broadcast');
+console.log('listen past broadcast content script loaded');
 var id = window.location.pathname.split('/').splice(2).join('');
 
 window.onbeforeunload = function() {
-  var player = document.querySelectorAll('.ember-view.full object');
-    if (player && player.length) {
-      player = player[0];
-      var obj = {};
-      obj[id] = player.getVideoTime();
-      chrome.extension.sendMessage(obj);
-    }
+  var player = getPlayer();
+  if (player.getTime) {
+    var obj = {};
+    obj[id] = player.getTime();
+    console.log('time', player.getTime());
+    chrome.extension.sendMessage(obj);
+  }
 };
 
 var updateUrl = function(newUrl) {
@@ -59,7 +60,7 @@ Storage.get(constants.SHOULD_RESUME, function(shouldResume) {
   }
 })
 
-},{"../chrome-api/storage":1,"../constants":2,"./resume-video":4}],4:[function(require,module,exports){
+},{"../chrome-api/storage":1,"../constants":2,"../getPlayer":5,"./resume-video":4}],4:[function(require,module,exports){
 var Storage = require('../chrome-api/storage');
 var utils = require('../utils');
 
@@ -88,7 +89,42 @@ var resumeVideo = function(pathname, searchPath, cb) {
 }
 
 module.exports = resumeVideo;
-},{"../chrome-api/storage":1,"../utils":5}],5:[function(require,module,exports){
+
+},{"../chrome-api/storage":1,"../utils":6}],5:[function(require,module,exports){
+var getPlayer = function() {
+  var videoPlayer = {};
+  var player = null;
+  player = document.querySelectorAll('.ember-view.full object')[0];
+
+  if (player) {
+    videoPlayer.mute = player.mute();
+    videoPlayer.unmute = player.unmute();
+  } else {
+    player = document.querySelector('.player-video object');
+    var objVolumen = document.querySelector('.player-volume button');
+    var muteUnmute = function() {
+      objVolumen.click();
+    };
+    videoPlayer.mute = muteUnmute;
+    videoPlayer.unmute = videoPlayer.mute;
+  }
+
+  if (!player) return {};
+
+  videoPlayer.play = player.playVideo;
+  videoPlayer.pause = player.pauseVideo;
+  videoPlayer.isPaused = player.isPaused;
+  videoPlayer.jump = player.videoSeek;
+  videoPlayer.getTime = function() {
+    return ~~player.getVideoTime();
+  }
+
+  return videoPlayer;
+};
+
+module.exports = getPlayer;
+
+},{}],6:[function(require,module,exports){
 var format = function(s, d) {
   for(var p in d)
     s=s.replace(new RegExp('{'+p+'}','g'), d[p]);
