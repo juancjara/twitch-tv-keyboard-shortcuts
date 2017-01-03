@@ -16,6 +16,7 @@
     "alarms",
     "tabs"
   ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "content_scripts": [
     {
       "matches": ["http://www.twitch.tv/*/v/*", "http://twitch.tv/*/v/*"],

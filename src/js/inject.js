@@ -2,29 +2,62 @@ console.log('twitch shortcuts successfully injected', new Date());
 
 var getPlayer = require('./getPlayer.js');
 
+var Storage = require('./chrome-api/storage');
+//TODO: refactor storage
+
 (function(player){
 
   var stepSize = 10; //seconds
   var isMuted = false; //assuming stream is not muted at the begining
   var player = player;
+  var keyEvents = {};
 
   var init = function() {
+    keyEvents = {
+      play: {
+        key: 75,
+        cb: playOrPause,
+      },
+      right: {
+        key: 76,
+        cb: moveRight,
+      },
+      left: {
+        key: 74,
+        cb: moveLeft,
+      },
+      mute: {
+        key: 77,
+        cb: toggleSound,
+      }
+    };
+
+    var receiveMessage = function (message) {
+      keyEvents[message.payload.id].key = message.payload.keyCode;
+    }
+    Storage.get('TWITCH_KEYS', function(savedBindings) {
+      Object.keys(savedBindings).forEach(function (k) {
+        keyEvents[k].key = savedBindings[k];
+      });
+      chrome.runtime.onMessage.addListener(receiveMessage);
+    })
     initListeners();
   };
 
   var initListeners = function() {
-    var keyEvents = {
-      75: playOrPause, //k
-      76: moveRight, //l
-      74: moveLeft, //j,
-      77: toggleSound //m
-    };
 
     var keyUpListener = function(e){
-      console.log('key pressed');
-      if (e.keyCode in keyEvents) {
-        keyEvents[e.keyCode]();
+      var tagName = e.target.tagName;
+      if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
+        return false;
       }
+
+      console.log('key pressed');
+      var match = Object.keys(keyEvents).forEach(function (k) {
+        if (keyEvents[k].key === e.keyCode) {
+          keyEvents[k].cb();
+        }
+      })
     };
     document.addEventListener('keyup', keyUpListener);
   };
@@ -41,7 +74,7 @@ var getPlayer = require('./getPlayer.js');
   var move = function(steps) {
     return function() {
       if (player.isPaused()) {
-        return;
+        return  ;
       }
       var nextTime = player.getTime() + steps;
       if (nextTime < 0) {
