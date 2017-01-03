@@ -13,8 +13,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "git",
-    "url": "git://github.com/juancjara/twitch-tv-keyboard-shortcuts.git"
+    "url": "git://github.com/juancjara/twitch-tv-keyboard-shortcuts.git",
+    "type": "git"
   },
   "author": "juanc.jara",
   "license": "MIT",
@@ -22,6 +22,6 @@
     "url": "https://github.com/juancjara/twitch-tv-keyboard-shortcuts/issues"
   },
   "dependencies": {
-    "watchify": "^3.4.0"
+    "watchify": "^3.8.0"
   }
 }

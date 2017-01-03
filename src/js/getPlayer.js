@@ -1,32 +1,66 @@
+var getHtml5PlayerMethods = function (player) {
+  return {
+    play: player.play.bind(player),
+    pause: player.pause.bind(player),
+    isPaused: function () {
+      return player.paused;
+    },
+    getTime: function () {
+      return player.currentTime;
+    },
+    jump: function (nextTime) {
+      player.currentTime = nextTime;
+    },
+  };
+}
+
+var getFlashPlayerMethods = function (player) {
+  return {
+    play: player.playVideo,
+    pause: player.pauseVideo,
+    isPaused: function () {
+      return !player.isPaused();
+    },
+    jump: player.videoSeek,
+    getTime: function() {
+      return ~~player.getVideoTime();
+    },
+  };
+}
+
+var getPlayerMethods = {
+  'html5': getHtml5PlayerMethods,
+  'flash': getFlashPlayerMethods,
+};
+
 var getPlayer = function() {
-  var videoPlayer = {};
-  var player = null;
-  player = document.querySelectorAll('.ember-view.full object')[0];
+  var html5Player = document.querySelector('.player-video video');
+  var flashPlayer = document.querySelector('.player-video object');
 
-  if (player) {
-    videoPlayer.mute = player.mute();
-    videoPlayer.unmute = player.unmute();
+  if (!flashPlayer && !html5Player) {
+    return {}
+  }
+
+  var player = html5Player || flashPlayer;
+  var playerType;
+  if (html5Player) {
+    playerType = 'html5';
   } else {
-    player = document.querySelector('.player-video object');
-    var objVolumen = document.querySelector('.player-volume button');
-    var muteUnmute = function() {
-      objVolumen.click();
-    };
-    videoPlayer.mute = muteUnmute;
-    videoPlayer.unmute = videoPlayer.mute;
+    playerType = 'flash';
   }
 
-  if (!player) return {};
+  var objVolume = document.querySelector('.player-volume button');
+  var toggleVolume = objVolume.click.bind(objVolume);
+  var volumenMethods = {
+    mute: toggleVolume,
+    unmute: toggleVolume,
+  };
 
-  videoPlayer.play = player.playVideo;
-  videoPlayer.pause = player.pauseVideo;
-  videoPlayer.isPaused = player.isPaused;
-  videoPlayer.jump = player.videoSeek;
-  videoPlayer.getTime = function() {
-    return ~~player.getVideoTime();
-  }
-
-  return videoPlayer;
+  return Object.assign(
+    {},
+    volumenMethods,
+    getPlayerMethods[playerType](player)
+  );
 };
 
 module.exports = getPlayer;
